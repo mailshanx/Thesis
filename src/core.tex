@@ -1,0 +1,45 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\begin{document}
+
+\section{Schemes, arms, and packets}
+We define a \emph{scheme} to be a vector that contains the values of each
+parameter we wish to tune. A bandit \emph{arm} is the same as a scheme, except
+that it does not specify an FEC. Each arm is associated with a few
+different schemes. In our case, each arm is associated with $4$ different
+schemes, corresponding to Convolutional coding, Golay coding, both, and none
+(test packets).
+
+If a packet encoded in scheme/tentacle $i$ is successfully received, it yields
+an ``instantaneous'' data rate $\mu_i$. We have $2$ types of packets: test and
+data packets. Test packets are pre-generated bit patterns, useful for estimating
+the BER of the corresponding bandit arm. A modem can recieve a test packet $n$
+bits in length, and can compute the number of bits $k$ that were erroneously received. 
+Since a test packet carries no user information, the corresponding scheme always yields
+a data rate of zero. A data packet that is successfully recieved yields a
+non-zero data rate depending on the scheme. If the data packet is not
+succeffully recieved, it yields a data rate of zero.
+
+
+\section{Linktuner overview}
+The linktuner is used in the context of a point to point communication link
+with BER feedback. The master modem decides to switch to a particular scheme,
+and transmit packets encoded in that scheme. The slave modem reports
+success/failure if data packets were transmitted, and $n$, $k$ if a test packet
+was transmitted. The linktuner is fed these two pieces of information, and is
+the basis on which it updates it's knowledge.  
+
+The linktuner begins operation by generating an initial set of bandit arms by
+uniformly sampling the search space. After $c$ transmissions, we
+generate a new set of bandits and add them to our pool of existing ones. The sampling
+process draws samples from a probability density function that centers around
+the scheme with the highest data rate estimates. As time progresses, the density function
+becomes narrower. 
+
+At any given time, the tuner decides which 
+
+
+\end{document}

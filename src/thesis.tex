@@ -1,0 +1,33 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+
+\begin{document}
+
+\title{title goes here}
+\author{author goes here}
+\date{date goes here}
+\maketitle
+
+\pagenumbering{roman}
+\tableofcontents
+\listoffigures
+\listoftables
+
+\chapter*{Acknowledgements}
+\include{abstract}
+
+\pagenumbering{arabic}
+\include{intro}
+\include{techintro}
+\include{method}
+\include{results}
+\include{conc}
+
+\bibliographystyle{plain}
+\bibliography{thesis}
+
+\end{document}
