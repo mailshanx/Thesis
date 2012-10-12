@@ -1,0 +1,100 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\begin{document}
+\begin{abstract}
+
+
+The ARL has been developing a modem that does wireless communication in an
+underwater channel. The modem is based on OFDM modulation and uses acoustic
+signals for data transmission. Many parameters of the modem are software
+configurable, and the communication performance of the modem depends on how
+``suitable'' these values are for a given channel. We refer to the
+process of determining these parameter values as \emph{link tuning}.
+
+While it is possible to tune a communication link for many different objectives
+such as data rate, reliability, spectral efficiency etc, our focus lies in
+maximizing the average data rate for a point to point communication link.
+
+To illustrate the need for such a link tuner, consider the modulation parameters
+of the ARL modem. The modulation system is based on OFDM. One can choose between
+coherent / incoherent modes, time / frequency differential modes, QPSK / BPSK,
+OFDM parameters such as prefix / suffix length, number of carriers, number of nulls,
+and so on. In addition, it also possible to choose between
+Convolutional coding, Golay coding (or both), transmission power levels, and so
+on. The number of possible combinations of these parameter values is of the
+order of millions. Depending on the values chosen for these parameters and the
+channel we are operating on, the resulting data rate can range anywhere from
+zero to 10 Kbps. 
+
+We focus on building a data driven approach to link tuning. Specifically, our
+link tuner uses only empirical bit / packet error rate information. A possible
+alternative to this approach would be a physics based link tuner. Such a link
+tuner would require a physical model of the interaction
+between various kinds of communication signals and the underwater channel. Since
+no such a model is available, we pursue a data driven approach. Another
+advantage of a data driven link tuner is it's independance from the modem
+implementation: the same tuner can be utilized in a different modem with a
+completely different modulation / error coding implementation. Finally, it would
+be possible to incorporate any existing knowledge of the channel physics by
+using that to cull a portion of the parameter value space, and thus narrow the search space of
+the tuner.
+
+One can think of the link tuner as a learning agent that tries to learn a
+mapping from a given state to an action in order to maximize a numerical reward
+signal returned by the environment. In our case, the state consists of our
+knowledge, the action space corresponds to the set of available parameter
+configurations, and the reward corresponds to the data rate. In order to make
+better choices in the future, the agent needs to try new actions by exploring
+the action space.
+But in order to generate more reward, the agent needs to exploit it's existing knowledge.
+This leads us to a central theme: that of balancing exploration versus exploitation.
+Pursuing a purely exploration or exploitation based policy leads to failure, so
+we need to find some sweet spot in the middle.  
+
+We are concerned with the \emph{whole} problem of maximizing the average
+data rate, rather than attaining the maximum possible data rate. Therefore, we
+seek to optimize the entire sequence of parameter configurations that are tried
+out in the process of link tuning. This is in contrast to a supervised learning
+situation which is more commonly discussed in machine learning literature. 
+In a supervised learning situation, an agent is supplied with sample vectors and
+output results from an external oracle. In our scenario, we have no examples of how a particular configuration might perform at
+the outset. Instead, the tuner needs to learn this mapping by
+interacting with the channel. 
+
+In light of the above considerations, we choose a modified form of the 
+\emph{multi armed bandit} (MAB) problem as a model for the link tuning process.
+Imagine that you are a bandit presented with a set of slot machines. When
+played, each machine generates some reward as per an (initially unknown) reward distribution. 
+The multi armed bandit problem consists of determining the sequence and order in
+which the bandit must pull the slot machine arms in order to maximize the expected reward.
+In our case, a bandit arm consists of a particular parameter configuration. 
+
+In the traditional MAB setting, the number of arms remains fixed. But in our
+case, due the an exceedingly large search space, it would be inpractical to
+associate a bandit arm with every available parameter configuration. At this point, we
+modify the original MAB setting by introducing an arm generation process. As
+time progresses, we sample points in the neighborhood of the more successful
+bandit arms. 
+
+To solve the bandit problem, we propose an algorithm that begins by computing
+the value function for each scheme. The value function is a measure of the
+inherent value of a scheme in a given state. It is computed by a
+dynamic-programming function that computes the expected reward at current time
+as well as future time steps conditional on choosing the given scheme now. Once
+the value functions are computed, we select the scheme with the highest value
+function. We compare this approach with other bandit algorithms such as the
+upper confidence bounds (UCB), UCB1-tuned and pursuit algorithms. We also try out other heuristic methods such as $\epsilon - $ greedy and softmax exploration.
+Experiments in a tank based underwater channel demonstrate that the dynamic
+programming approach is able to converge to the maximum possible data rate
+(~10 Kbps for our modem) in steady state, yielding an average data rate of 8
+Kbps. For reference, the default configuration used in the modem
+yields a data rate of around 450 bps if all packets are successfully received.
+Improvements in a lake based channel are less dramatic but nevertheless
+significant. 
+
+
+\end{abstract}
+\end{document}
